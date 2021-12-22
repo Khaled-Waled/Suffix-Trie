@@ -88,11 +88,12 @@ public:
     void Search(char word[])
     {
         int s=1;
+        bool found = false;
         while(word[s-1]!='$')
         {
             s++;   
         }
-        //move the pointer to the root of the occurences tree
+        //move the pointer to the root of the occurences sub-tree
         Node* ptr = root;
         for(int i=0; i<s; i++)
         {
@@ -103,9 +104,24 @@ public:
                 {
                     ptr = ptr->right;
                 }
+                else
+                {
+                    break;
+                } 
             }
-
+            //in the case of ptr = last element in the list, ie. ptr didnt find the element in the middle
+            if(!ptr->right && ptr->c != word[i])
+            {
+                break;
+            }
+            else
+            {
+                found=true;
+            }
         }
+
+        //print all the indicies down in the sub-tree
+        //TODO
     }
 };
 
