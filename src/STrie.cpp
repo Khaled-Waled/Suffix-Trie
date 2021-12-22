@@ -75,7 +75,7 @@ public:
                             ptr=ptr->right;
                             if(suff[i]=='$')
                             {
-                                ptr->index=i;
+                                ptr->index=j;
                             }
                             continue;
                         }
@@ -121,11 +121,26 @@ public:
         }
 
         //print all the indicies down in the sub-tree
-        //TODO
+        printAll(ptr);
+    }
+    void printAll(Node* curr)
+    {
+        if(curr->index!=-1)
+        {
+            cout<<curr->index;
+            return;
+        }
+        Node* temp = curr->down;
+        while(temp)
+        {
+            printAll(temp);
+            temp = temp->right;
+        }
     }
 };
 
 int main()
 {
-    SuffixTrie t("bananabanana$");  
+    SuffixTrie t("bananabanana$");
+    t.Search("ana");
 }
