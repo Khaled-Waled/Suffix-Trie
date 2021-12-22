@@ -5,21 +5,14 @@ class Node
 {
 public:
     char c;
-    Node* right;
-    Node* down;
+    Node* next;
+    Node* child;
     int index;
-    Node(char a, Node* r, Node* d)
-    {
-        this->c = a;
-        this->right=r;
-        this->down=d;
-        this->index=-1;
-    }
     Node(char a)
     {
         this->c = a;
-        this->right=0;
-        this->down=0;
+        this->next=0;
+        this->child=0;
         this->index=-1;
     }
 
@@ -51,10 +44,10 @@ public:
             ptr = root;
             for (int i=j; i<suffSize; i++)
             {
-                if(ptr->down==0)
+                if(ptr->child==0)
                 {
-                    ptr->down = new Node(suff[i]);
-                    ptr=ptr->down;
+                    ptr->child = new Node(suff[i]);
+                    ptr=ptr->child;
                     if(suff[i]=='$')
                     {
                         ptr->index=j;
@@ -63,17 +56,17 @@ public:
                 }
                 else
                 {
-                    ptr=ptr->down;
+                    ptr=ptr->child;
                     while(ptr->c != suff[i])
                     {
-                        if (ptr->right)
+                        if (ptr->next)
                         {
-                            ptr= ptr->right;
+                            ptr= ptr->next;
                         }
                         else
                         {
-                            ptr->right = new Node(suff[i]);
-                            ptr=ptr->right;
+                            ptr->next = new Node(suff[i]);
+                            ptr=ptr->next;
                             if(suff[i]=='$')
                             {
                                 ptr->index=j;
@@ -98,12 +91,12 @@ public:
         Node* ptr = root;
         for(int i=0; i<s; i++)
         {
-            ptr = ptr->down;
-            while(ptr-> right)
+            ptr = ptr->child;
+            while(ptr-> next)
             {
                 if(ptr->c != word[i])
                 {
-                    ptr = ptr->right;
+                    ptr = ptr->next;
                 }
                 else
                 {
@@ -111,7 +104,7 @@ public:
                 }
             }
             //in the case of ptr = last element in the list, ie. ptr didnt find the element in the middle
-            if(!ptr->right && ptr->c != word[i])
+            if(!ptr->next && ptr->c != word[i])
             {
                 break;
             }
@@ -122,12 +115,12 @@ public:
             }
         }
 
-        //print all the indicies down in the sub-tree
+        //print all the indicies child in the sub-tree
         if (found)
         {
             printAll(ptr);
+            cout << endl;
         }
-
     }
 
     void printAll(Node* curr)
@@ -137,17 +130,19 @@ public:
             cout<<curr->index << " ";
             return;
         }
-        Node* temp = curr->down;
+        Node* temp = curr->child;
         while(temp)
         {
             printAll(temp);
-            temp = temp->right;
+            temp = temp->next;
         }
+
     }
 };
 
 int main()
 {
     SuffixTrie t("bananabanaba$");
-    t.Search("naba");
+    t.Search("ana"); // Prints: 1 3 7
+    t.Search("naba"); // Prints: 4 8
 }
