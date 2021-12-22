@@ -35,7 +35,7 @@ public:
         suffSize=1;
         while(word[suffSize-1]!='$')
         {
-            suffSize++;   
+            suffSize++;
         }
         this->root = new Node('&');
         suff = new char[suffSize];
@@ -48,6 +48,7 @@ public:
         Node* ptr = root;
         for(int j=0; j<suffSize; j++)
         {
+            ptr = root;
             for (int i=j; i<suffSize; i++)
             {
                 if(ptr->down==0)
@@ -56,7 +57,7 @@ public:
                     ptr=ptr->down;
                     if(suff[i]=='$')
                     {
-                        ptr->index=i;
+                        ptr->index=j;
                     }
                     continue;
                 }
@@ -84,14 +85,14 @@ public:
             }
         }
     }
-    
+
     void Search(char word[])
     {
-        int s=1;
+        int s=0;
         bool found = false;
-        while(word[s-1]!='$')
+        while(word[s] != '\0')
         {
-            s++;   
+            s++;
         }
         //move the pointer to the root of the occurences sub-tree
         Node* ptr = root;
@@ -107,7 +108,7 @@ public:
                 else
                 {
                     break;
-                } 
+                }
             }
             //in the case of ptr = last element in the list, ie. ptr didnt find the element in the middle
             if(!ptr->right && ptr->c != word[i])
@@ -116,18 +117,24 @@ public:
             }
             else
             {
+
                 found=true;
             }
         }
 
         //print all the indicies down in the sub-tree
-        printAll(ptr);
+        if (found)
+        {
+            printAll(ptr);
+        }
+
     }
+
     void printAll(Node* curr)
     {
         if(curr->index!=-1)
         {
-            cout<<curr->index;
+            cout<<curr->index << " ";
             return;
         }
         Node* temp = curr->down;
@@ -141,6 +148,6 @@ public:
 
 int main()
 {
-    SuffixTrie t("bananabanana$");
-    t.Search("ana");
+    SuffixTrie t("bananabanaba$");
+    t.Search("naba");
 }
