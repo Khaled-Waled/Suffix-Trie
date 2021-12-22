@@ -30,60 +30,86 @@ public:
     Node* root;
     int suffSize;
     char* suff;
-    SuffixTrie(string word)
+    SuffixTrie(char word[])
     {
+        suffSize=1;
+        while(word[suffSize-1]!='$')
+        {
+            suffSize++;   
+        }
         this->root = new Node('&');
-        suff = new char[word.length()];
+        suff = new char[suffSize];
         this->suff = word;
-        this->suffSize = word.length();
         buildTrie();
     }
 
     void buildTrie()
     {
         Node* ptr = root;
-        for (int i=0; i<suffSize; i++)
+        for(int j=0; j<suffSize; j++)
         {
-            if(ptr->down==0)
+            for (int i=j; i<suffSize; i++)
             {
-                ptr->down = new Node(suff[i]);
-                ptr=ptr->down;
-                if(suff[i]=='$')
+                if(ptr->down==0)
                 {
-                    ptr->index=i;
-                    indices[suffSize-i] = ptr;
-                }
-                continue;
-            }
-            else
-            {
-                ptr=ptr->down;
-                while(ptr->c != suff[i])
-                {
-                    if (ptr->right)
+                    ptr->down = new Node(suff[i]);
+                    ptr=ptr->down;
+                    if(suff[i]=='$')
                     {
-                        ptr= ptr->right;
+                        ptr->index=i;
                     }
-                    else
+                    continue;
+                }
+                else
+                {
+                    ptr=ptr->down;
+                    while(ptr->c != suff[i])
                     {
-                        ptr->right = new Node(suff[i]);
-                        ptr=ptr->right;
-                        if(suff[i]=='$')
+                        if (ptr->right)
                         {
-                            ptr->index=i;
-                            indices[suffSize-i] = ptr;
+                            ptr= ptr->right;
                         }
-                        continue;
+                        else
+                        {
+                            ptr->right = new Node(suff[i]);
+                            ptr=ptr->right;
+                            if(suff[i]=='$')
+                            {
+                                ptr->index=i;
+                            }
+                            continue;
+                        }
                     }
                 }
             }
         }
     }
-    Node* indices[];
+    
+    void Search(char word[])
+    {
+        int s=1;
+        while(word[s-1]!='$')
+        {
+            s++;   
+        }
+        //move the pointer to the root of the occurences tree
+        Node* ptr = root;
+        for(int i=0; i<s; i++)
+        {
+            ptr = ptr->down;
+            while(ptr-> right)
+            {
+                if(ptr->c != word[i])
+                {
+                    ptr = ptr->right;
+                }
+            }
+
+        }
+    }
 };
 
 int main()
 {
-    //char word[] = {'b','a','n','a','n','a','$'};
     SuffixTrie t("bananabanana$");  
 }
