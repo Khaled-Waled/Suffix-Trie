@@ -27,21 +27,11 @@ public:
 
 class SuffixArray
 {
-private:
-    class LLNode
-    {
-    public:
-        Node* data;
-        LLNode* next;
 
-        LLNode()
-        {
-            this->next= nullptr;
-        }
-    };
 public:
     int n;
     Node* arr;
+    Node* temp;
     int* alpha;
     int alphaSize=1;
 
@@ -75,10 +65,14 @@ public:
 
         //fill arr with characters
         this->arr = new Node[n];
+        this->temp = new Node[n];
         for (int i=0; i<n;i++)
         {
             arr[i] = Node(word [i],i);
+            temp[i] = Node(word [i],i);
         }
+
+
     }
 
     void ConstructUsingPrefixDoubling()
@@ -96,10 +90,35 @@ public:
         arr[n-1].r2=0; //set $ data
         int counter=1;
 
-        //Second iteration*****************************
-        quickSort(arr,0,n);
+        for (int i=0; i<n-1; i++)
+        {
+            arr[i].r2= getOrderInAlpha(arr[i+1].c);
+        }
 
+        //Second iteration*****************************
+        quickSort(arr,0,n-1);
         
+        int _r1= arr[1].r1;
+        int _r2= arr[1].r2;
+        for (int i=1; i<n-1; i++)
+        {
+            if(arr[i].r1 == _r1)
+            {
+                if(arr[i].r2 != _r2)
+                {
+                    counter++;
+                    _r2 = arr[i].r2;
+                }
+            }
+            else
+            {
+                counter++;
+                _r1 = arr[i].r1;
+            }
+            arr[i].r2 = counter;
+        }
+
+
 
     }
     
@@ -148,35 +167,6 @@ public:
         return -9;
     }
 
-    Node* sortArr1()
-    {
-        LLNode* head = new LLNode();
-        head->data= &arr[0];
-
-        
-        for(int i=1; i<n; i++)
-        {
-            LLNode llNode = LLNode();
-            llNode.data = &arr[i];
-            llNode.next = 0;
-
-            LLNode* ptr = head;            
-            while (ptr->next != 0)
-            {
-                if(llNode.data->r1 > ptr->data->r1)
-                {
-                    ptr = ptr->next;
-                }
-                else
-                {
-                    llNode.next = ptr->next;
-                    break;
-                }
-            }
-            ptr->next = &llNode;
-        }
-    }
-
 
     int middlePartition(Node nodeArray[], int start, int pivot, int End){
         while(start <= End){
@@ -207,25 +197,19 @@ public:
     }
 }
 
-    Node* quickSort(Node nodeArray[], int length)
-    {
-        middledlePivot(nodeArray, 0, length - 1);
-        cout << "Quick Sort: ";
-    }
+    
 
-
-
-
-void Swap(Node* a, Node* b)
-    {
-        Node t = *a;
-        *a = *b;
-        *b = t;
-    }
+    void Swap(Node* a, Node* b)
+        {
+            Node t = *a;
+            *a = *b;
+            *b = t;
+        }
 
     int partition (Node arr[], int low, int high)
     {
         int pivot = arr[high].r1; // pivot 
+        int ppivot = arr[high].r2;     //second pivot
         int i = (low - 1); // Index of smaller element and indicates the right position of pivot found so far
 
         for (int j = low; j <= high - 1; j++)
@@ -235,6 +219,14 @@ void Swap(Node* a, Node* b)
             {
                 i++; // increment index of smaller element 
                 Swap(&arr[i], &arr[j]);
+            }
+            else if (arr[j].r1 == pivot)
+            {
+                if (arr[j].r2 < ppivot)
+                {
+                    i++; // increment index of smaller element 
+                    Swap(&arr[i], &arr[j]);
+                }
             }
         }
         Swap(&arr[i + 1], &arr[high]);
