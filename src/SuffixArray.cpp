@@ -77,7 +77,7 @@ public:
 
     void ConstructUsingPrefixDoubling()
     {
-        int k=0;
+        int k=1;
         //First iteration*****************************
         //set r1
         arr[n-1].r1=0; //set $ data
@@ -90,35 +90,42 @@ public:
         arr[n-1].r2=0; //set $ data
         int counter=1;
 
-        for (int i=0; i<n-1; i++)
-        {
-            arr[i].r2= getOrderInAlpha(arr[i+1].c);
-        }
 
-        //Second iteration*****************************
-        quickSort(arr,0,n-1);
-        
-        int _r1= arr[1].r1;
-        int _r2= arr[1].r2;
-        for (int i=1; i<n-1; i++)
+        while(counter<n-1)
         {
-            if(arr[i].r1 == _r1)
+            counter= 1;
+            for (int i=0; i<n-1; i++)
             {
-                if(arr[i].r2 != _r2)
+                arr[i].r2= getOrderInAlpha(arr[i+k].c);
+            }
+
+            //Nth iteration*****************************
+            quickSort(arr,0,n-1);
+            
+            int _r1= arr[1].r1;
+            int _r2= arr[1].r2;
+            for (int i=1; i<n; i++)
+            {
+                if(arr[i].r1 == _r1)
+                {
+                    if(arr[i].r2 != _r2)
+                    {
+                        counter++;
+                        _r2 = arr[i].r2;
+                    }
+                }
+                else
                 {
                     counter++;
+                    _r1 = arr[i].r1;
                     _r2 = arr[i].r2;
                 }
+                arr[i].r2 = counter;
             }
-            else
-            {
-                counter++;
-                _r1 = arr[i].r1;
-            }
-            arr[i].r2 = counter;
-        }
-
-
+            k *=2;
+            Print();
+            r2r1();
+        }        
 
     }
     
@@ -152,6 +159,8 @@ public:
             cout<<arr[i].r2<<" || ";
         }
 
+        cout<<endl<<endl;
+
 
     }
 
@@ -166,38 +175,6 @@ public:
         }
         return -9;
     }
-
-
-    int middlePartition(Node nodeArray[], int start, int pivot, int End){
-        while(start <= End){
-            while(nodeArray[start].r1 < pivot){
-                start+=1;
-            }
-            while(nodeArray[End].r1 > pivot){
-                End-=1;
-            }
-            if(start <= End){
-                swap(nodeArray[start], nodeArray[End]);
-                start+=1;
-                End-=1;
-            }
-        }
-        return start;
-    }
-
-    void middledlePivot(Node nodeArray[], int start, int End){
-    if(start < End){
-        int pivot = nodeArray[(start + End) / 2].r1;
-
-        int pivotRightIndex = middlePartition(nodeArray, start, pivot, End);
-
-        middledlePivot(nodeArray, start, pivotRightIndex - 1);
-        middledlePivot(nodeArray, pivotRightIndex, End);
-
-    }
-}
-
-    
 
     void Swap(Node* a, Node* b)
         {
@@ -233,7 +210,6 @@ public:
         return (i + 1);
     }
 
-
     void quickSort(Node arr[], int low, int high)
     {
         if (low < high)
@@ -249,6 +225,13 @@ public:
         }
     }
 
+    void r2r1 ()
+    {
+        for (int i=0; i<n; i++)
+        {
+            arr[i].r1=arr[i].r2;
+        }
+    }
 };
 
 int main()
@@ -257,7 +240,7 @@ int main()
 
     t.ConstructUsingPrefixDoubling();
 
-    t.Print(); // Prints:  14 11 12  0  6  3  9 13  1  7  4  2  8 10  5
+    //t.Print(); // Prints:  14 11 12  0  6  3  9 13  1  7  4  2  8 10  5
 
     return 0;
 }
