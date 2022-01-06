@@ -97,6 +97,9 @@ public:
         int counter=1;
 
         //Second iteration*****************************
+        quickSort(arr,0,n);
+
+        
 
     }
     
@@ -145,7 +148,7 @@ public:
         return -9;
     }
 
-    Node* sortArr()
+    Node* sortArr1()
     {
         LLNode* head = new LLNode();
         head->data= &arr[0];
@@ -172,17 +175,88 @@ public:
             }
             ptr->next = &llNode;
         }
+    }
 
-/*
-curr->data= &arr[i];
-            LLNode* temp;
-            temp;
-            curr->next= temp;
-            curr = temp;
-            */
 
+    int middlePartition(Node nodeArray[], int start, int pivot, int End){
+        while(start <= End){
+            while(nodeArray[start].r1 < pivot){
+                start+=1;
+            }
+            while(nodeArray[End].r1 > pivot){
+                End-=1;
+            }
+            if(start <= End){
+                swap(nodeArray[start], nodeArray[End]);
+                start+=1;
+                End-=1;
+            }
+        }
+        return start;
+    }
+
+    void middledlePivot(Node nodeArray[], int start, int End){
+    if(start < End){
+        int pivot = nodeArray[(start + End) / 2].r1;
+
+        int pivotRightIndex = middlePartition(nodeArray, start, pivot, End);
+
+        middledlePivot(nodeArray, start, pivotRightIndex - 1);
+        middledlePivot(nodeArray, pivotRightIndex, End);
 
     }
+}
+
+    Node* quickSort(Node nodeArray[], int length)
+    {
+        middledlePivot(nodeArray, 0, length - 1);
+        cout << "Quick Sort: ";
+    }
+
+
+
+
+void Swap(Node* a, Node* b)
+    {
+        Node t = *a;
+        *a = *b;
+        *b = t;
+    }
+
+    int partition (Node arr[], int low, int high)
+    {
+        int pivot = arr[high].r1; // pivot 
+        int i = (low - 1); // Index of smaller element and indicates the right position of pivot found so far
+
+        for (int j = low; j <= high - 1; j++)
+        {
+            // If current element is smaller than the pivot 
+            if (arr[j].r1 < pivot)
+            {
+                i++; // increment index of smaller element 
+                Swap(&arr[i], &arr[j]);
+            }
+        }
+        Swap(&arr[i + 1], &arr[high]);
+        return (i + 1);
+    }
+
+
+    void quickSort(Node arr[], int low, int high)
+    {
+        if (low < high)
+        {
+            /* pi is partitioning index, arr[p] is now 
+            at right place */
+            int pi = partition(arr, low, high);
+
+            // Separately sort elements before 
+            // partition and after partition 
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
 };
 
 int main()
