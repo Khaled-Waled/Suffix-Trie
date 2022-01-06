@@ -5,7 +5,7 @@ using namespace std;
 
 class Node
 {
-    
+
 public:
     char c;
     int idx;
@@ -32,12 +32,12 @@ public:
     int n;
     Node* arr;
     Node* temp;
-    int* alpha;
+    char* alpha;
     int alphaSize=1;
 
-    SuffixArray(char word[])
+    SuffixArray(char const* word)
     {
-        this->alpha = new int[27];
+        this->alpha = new char[27];
         alpha[0]='$';
         n=1;
         while(word[n-1] !='$')
@@ -59,9 +59,11 @@ public:
 
             //increase the size
             n++;
-        
+
         }
-       
+        insertionSort(alpha, alphaSize);
+
+
 
         //fill arr with characters
         this->arr = new Node[n];
@@ -80,28 +82,31 @@ public:
         int k=1;
         //First iteration*****************************
         //set r1
-        arr[n-1].r1=0; //set $ data
+        arr[n-1].r1=0;
+        temp[n-1].r1=0;//set $ data
         for (int i=0; i<n-1; i++)
         {
             arr[i].r1= getOrderInAlpha(arr[i].c);
+            temp[arr[i].idx].r1 = arr[i].r1;
         }
-        
+
         //set r2
         arr[n-1].r2=0; //set $ data
         int counter=1;
 
-
         while(counter<n-1)
         {
             counter= 1;
-            for (int i=0; i<n-1; i++)
+            for (int i=0; i<n; i++)
             {
-                arr[i].r2= getOrderInAlpha(arr[i+k].c);
+                if (arr[i].idx+k <= n-1) {
+                    arr[i].r2 = temp[arr[i].idx+k].r1;
+                }
             }
 
             //Nth iteration*****************************
             quickSort(arr,0,n-1);
-            
+
             int _r1= arr[1].r1;
             int _r2= arr[1].r2;
             for (int i=1; i<n; i++)
@@ -123,45 +128,21 @@ public:
                 arr[i].r2 = counter;
             }
             k *=2;
-            Print();
             r2r1();
-        }        
+            for (int i = 0; i < n; i++) {
+                temp[arr[i].idx].r1 = arr[i].r1;
+            }
+        }
 
     }
-    
+
 
     void Print()
     {
-        cout<<"|| ";
         for(int i=0; i<n; i++)
         {
-            cout<<arr[i].c<<" || ";
+            cout<<arr[i].idx<<" ";
         }
-        cout<<endl;
-
-        cout<<"|| ";
-        for(int i=0; i<n; i++)
-        {
-            cout<<arr[i].idx<<" || ";
-        }
-        cout<<endl;
-
-        cout<<"|| ";
-        for(int i=0; i<n; i++)
-        {
-            cout<<arr[i].r1<<" || ";
-        }
-        cout<<endl;
-
-        cout<<"|| ";
-        for(int i=0; i<n; i++)
-        {
-            cout<<arr[i].r2<<" || ";
-        }
-
-        cout<<endl<<endl;
-
-
     }
 
     int getOrderInAlpha(char ch)
@@ -176,32 +157,49 @@ public:
         return -9;
     }
 
-    void Swap(Node* a, Node* b)
+    void insertionSort(char alpha[], int length){
+        char key;
+        for(int i = 1; i < length; i++)
         {
-            Node t = *a;
-            *a = *b;
-            *b = t;
+            key = alpha[i];
+            int j = i;
+            // For descending order switch the sign
+            while(j >= 1 && alpha[j - 1] > key)
+            {
+                alpha[j] = alpha[j - 1];
+                j--;
+            }
+            alpha[j] = key;
         }
+    }
+
+
+    void Swap(Node* a, Node* b)
+    {
+        Node t = *a;
+        *a = *b;
+        *b = t;
+    }
 
     int partition (Node arr[], int low, int high)
     {
-        int pivot = arr[high].r1; // pivot 
+        int pivot = arr[high].r1; // pivot
         int ppivot = arr[high].r2;     //second pivot
         int i = (low - 1); // Index of smaller element and indicates the right position of pivot found so far
 
         for (int j = low; j <= high - 1; j++)
         {
-            // If current element is smaller than the pivot 
+            // If current element is smaller than the pivot
             if (arr[j].r1 < pivot)
             {
-                i++; // increment index of smaller element 
+                i++; // increment index of smaller element
                 Swap(&arr[i], &arr[j]);
             }
             else if (arr[j].r1 == pivot)
             {
                 if (arr[j].r2 < ppivot)
                 {
-                    i++; // increment index of smaller element 
+                    i++; // increment index of smaller element
                     Swap(&arr[i], &arr[j]);
                 }
             }
@@ -214,12 +212,12 @@ public:
     {
         if (low < high)
         {
-            /* pi is partitioning index, arr[p] is now 
+            /* pi is partitioning index, arr[p] is now
             at right place */
             int pi = partition(arr, low, high);
 
-            // Separately sort elements before 
-            // partition and after partition 
+            // Separately sort elements before
+            // partition and after partition
             quickSort(arr, low, pi - 1);
             quickSort(arr, pi + 1, high);
         }
@@ -237,10 +235,7 @@ public:
 int main()
 {
     SuffixArray t("ACGACTACGATAAC$");
-
     t.ConstructUsingPrefixDoubling();
-
-    //t.Print(); // Prints:  14 11 12  0  6  3  9 13  1  7  4  2  8 10  5
-
+    t.Print(); // Prints:  14 11 12  0  6  3  9 13  1  7  4  2  8 10  5
     return 0;
 }
