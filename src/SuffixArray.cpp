@@ -1,7 +1,11 @@
 #include <iostream>
 using namespace std;
+
+
+
 class Node
 {
+    
 public:
     char c;
     int idx;
@@ -23,6 +27,18 @@ public:
 
 class SuffixArray
 {
+private:
+    class LLNode
+    {
+    public:
+        Node* data;
+        LLNode* next;
+
+        LLNode()
+        {
+            this->next= nullptr;
+        }
+    };
 public:
     int n;
     Node* arr;
@@ -75,6 +91,13 @@ public:
         {
             arr[i].r1= getOrderInAlpha(arr[i].c);
         }
+        
+        //set r2
+        arr[n-1].r2=0; //set $ data
+        int counter=1;
+
+        //Second iteration*****************************
+
     }
     
 
@@ -120,6 +143,45 @@ public:
             }
         }
         return -9;
+    }
+
+    Node* sortArr()
+    {
+        LLNode* head = new LLNode();
+        head->data= &arr[0];
+
+        
+        for(int i=1; i<n; i++)
+        {
+            LLNode llNode = LLNode();
+            llNode.data = &arr[i];
+            llNode.next = 0;
+
+            LLNode* ptr = head;            
+            while (ptr->next != 0)
+            {
+                if(llNode.data->r1 > ptr->data->r1)
+                {
+                    ptr = ptr->next;
+                }
+                else
+                {
+                    llNode.next = ptr->next;
+                    break;
+                }
+            }
+            ptr->next = &llNode;
+        }
+
+/*
+curr->data= &arr[i];
+            LLNode* temp;
+            temp;
+            curr->next= temp;
+            curr = temp;
+            */
+
+
     }
 };
 
